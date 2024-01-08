@@ -1,0 +1,28 @@
+{
+  "name": "mirek-animations",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Johnafriedman/mirek-animations.git"
+  },
+  "version": "1.0.0",
+  "engines": {
+    "node": "20.10.0",
+    "npm": "10.2.3"
+  },
+  "scripts": {
+    "start": "npm run ./server.js",
+    "build": "npm install"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "description": "art collaborations with Miroslaw Rogala",
+  "bugs": {
+    "url": "https://github.com/Johnafriedman/mirek-animations/issues"
+  },
+  "homepage": "https://github.com/Johnafriedman/mirek-animations#readme",
+  "main": "bin/www/server.js",
+  "devDependencies": {},
+  "author": ""
+}
