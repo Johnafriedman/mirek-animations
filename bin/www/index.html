@@ -4,6 +4,9 @@
         <meta charset="UTF-8">
         <title>HumanEnergy</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <style>
+            canvas {position: absolute}
+        </style>
     </head>
     <body>
 
@@ -11,11 +14,11 @@
 
         <script>
 
-            window.onload = initializeAnimation;
+            window.onload = humanEnergy;
         </script>
 
-    <canvas id="onscreen"></canvas>
-    <canvas id="offscreen"></canvas>
+    <canvas id="source" style="z-index:0"></canvas>
+    <canvas id="destination" style="z-index:1"></canvas>
 
     </body>
 </html>
