@@ -148,17 +148,29 @@ async function humanEnergy() {
             imgData.data[i + 2] = 0;
             imgData.data[i + 3] = 1;
         }
-        let maxX = 0, id;
+        let maxX = 0, minX = 10000, id;
 
         function drawADot() {
             for (let i = 0; i < scaledBounds[LEFT].h; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
-                srcCtx.putImageData(imgData, position[0][y]++, scaledBounds[LEFT].t + y);
-                // srcCtx.drawImage(pixelImg, position[0][y]++, scaledBounds[LEFT].t + y);
-                maxX = Math.max(maxX, position[0][y]);
+                srcCtx.putImageData(imgData, position[LEFT][y]++, scaledBounds[LEFT].t + y);
+                // srcCtx.drawImage(pixelImg, position[LEFT][y]++, scaledBounds[LEFT].t + y);
+                maxX = Math.max(maxX, position[LEFT][y]);
                 // srcCtx.putImageData(imgData, x, y);
                 if (maxX > scaledBounds[RIGHT].x)
+                    clearInterval(id);
+
+            }
+
+            for (let i = 0; i < scaledBounds[RIGHT].h; i++) {
+
+                let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h));
+                srcCtx.putImageData(imgData, position[RIGHT][y]--, scaledBounds[RIGHT].t + y);
+                // srcCtx.drawImage(pixelImg, position[RIGHT][y]--, scaledBounds[RIGHT].t + y);
+                minX = Math.min(minX, position[RIGHT][y]);
+                // srcCtx.putImageData(imgData, x, y);
+                if (minX < scaledBounds[LEFT].x)
                     clearInterval(id);
 
             }
