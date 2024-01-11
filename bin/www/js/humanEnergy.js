@@ -100,44 +100,61 @@ async function humanEnergy() {
             scaledBounds[b].t = Math.floor(bounds[b].t * scale);
             scaledBounds[b].b = Math.floor(bounds[b].b * scale);
             scaledBounds[b].x = Math.floor(bounds[b].x * scale);
+            scaledBounds[b].h = scaledBounds[b].b - scaledBounds[b].t;;
         }
         let imageData, color;
 
-        let height = scaledBounds[LEFT].b - scaledBounds[LEFT].t;
-        console.log("LEFT stop on color");
-        for (let i = 0, y = scaledBounds[LEFT].t; i < height; i++) {
+        // console.log("LEFT stop on color");
+        for (let i = 0, y = scaledBounds[LEFT].t; i < scaledBounds[LEFT].h; i++) {
             let x = scaledBounds[LEFT].x;
             do {
                 imageData = srcCtx.getImageData(x, y + i, 1, 1);
-                srcCtx.putImageData(imgData, x, y+i);
+                // srcCtx.putImageData(imgData, x, y+i);
 
                 x += bounds[LEFT].d;
                 color = (imageData.data[RED] || imageData.data[GREEN] || imageData.data[BLUE]);
             } while ((!color) && (x < scaledBounds[RIGHT].x));
-            if(color) console.log(`color:${color} x:${x} y:${i}`);
+            // if(color) console.log(`color:${color} x:${x} y:${i}`);
+
+            do {
+                imageData = srcCtx.getImageData(x, y + i, 1, 1);
+                // srcCtx.putImageData(imgData, x, y+i);
+
+                x += bounds[LEFT].d;
+                color = (imageData.data[RED] || imageData.data[GREEN] || imageData.data[BLUE]);
+            } while ((color) && (x < scaledBounds[RIGHT].x));
+            // if(color) console.log(`color:${color} x:${x} y:${i}`);
+
+
             pl[i] = x;
         }
 
-        console.log("RIGHT stop on color");
+        // console.log("RIGHT stop on color");
 
-        height = scaledBounds[RIGHT].b - scaledBounds[RIGHT].t;
 
-        for (let i = 0, y = scaledBounds[RIGHT].t; i < height; i++) {
+        for (let i = 0, y = scaledBounds[RIGHT].t; i < scaledBounds[RIGHT].h; i++) {
             let x = scaledBounds[RIGHT].x;
             do {
                 imageData = srcCtx.getImageData(x, y + i, 1, 1);
-                srcCtx.putImageData(imgData, x, y+i);
+                // srcCtx.putImageData(imgData, x, y+i);
 
                 x+=bounds[RIGHT].d;
                 color = (imageData.data[RED] || imageData.data[GREEN] || imageData.data[BLUE]);
-                console.log(`color:${color} x:${x}`)
-
             } while ((!color) && (x > scaledBounds[LEFT].x));
-            if(color) console.log(`color:${color} x:${x} y:${i}`);
+
+            do {
+                imageData = srcCtx.getImageData(x, y + i, 1, 1);
+                // srcCtx.putImageData(imgData, x, y+i);
+
+                x+=bounds[RIGHT].d;
+                color = (imageData.data[RED] || imageData.data[GREEN] || imageData.data[BLUE]);
+            } while ((color) && (x > scaledBounds[LEFT].x));
+
+            // if(color) console.log(`color:${color} x:${x} y:${i}`);
+
+
             pr[i] = x;
         }
-
-        debugger
     }
 
     function animate() {
