@@ -38,13 +38,15 @@ async function humanEnergy() {
             t: 438,
             b: 2410,
             x: 1164,
-            d: 1
+            d: 1,
+            h: 0
         },
         {
             t: 536,
             b: 1412,
             x: 3244,
-            d: -1
+            d: -1,
+            h: 0
         }
     ];
 
@@ -55,7 +57,7 @@ async function humanEnergy() {
 
     let pixelImg = null;
 
-    let pl, pr;
+    let position = [];
 
     let width, height;
 
@@ -76,8 +78,8 @@ async function humanEnergy() {
         srcCtx.canvas.width = width;
         srcCtx.canvas.height = height;
 
-        pl = new Array(scaledBounds[LEFT].b - scaledBounds[LEFT].t);
-        pr = new Array(scaledBounds[RIGHT].b - scaledBounds[RIGHT].t);
+        position[0] = new Array(scaledBounds[LEFT].b - scaledBounds[LEFT].t);
+        position[1] = new Array(scaledBounds[RIGHT].b - scaledBounds[RIGHT].t);
 
         const PIXEL_URL = "./assets/he/pixel.png";
 
@@ -91,46 +93,47 @@ async function humanEnergy() {
 
     }
 
-    function skipColor(x, y, side, isForeground){
+    function skipColor(x, y, side, isForeground) {
 
-        const imgData = srcCtx.createImageData(1,1);
-        imgData.data = [255,0,0,1];
+        // const imgData = srcCtx.createImageData(1,1);
+        // imgData.data = [255,0,0,1];
 
         let color, imageData;
         let otherSide = side === LEFT ? RIGHT : LEFT;
         let bound = scaledBounds[otherSide].x;
         do {
             imageData = srcCtx.getImageData(x, y, 1, 1);
-            srcCtx.putImageData(imgData, x, y);
+            // srcCtx.putImageData(imgData, x, y);
 
             x += bounds[side].d;
-            color = (imageData.data[RED] != 0) || (imageData.data[GREEN] !=0)  || (imageData.data[BLUE]!=0);
-        } while ((color == isForeground) && ( side === LEFT ? x < bound : x > bound));
+            color = (imageData.data[RED] != 0) || (imageData.data[GREEN] != 0) || (imageData.data[BLUE] != 0);
+        } while ((color == isForeground) && (side === LEFT ? x < bound : x > bound));
 
         return x;
     }
 
     function initializeAnimation() {
 
-        const imgData = srcCtx.createImageData(1,1);
-        imgData.data = [255,0,0,1];
+        const imgData = srcCtx.createImageData(1, 1);
+        imgData.data = [255, 0, 0, 1];
 
-        for (let b = 0; b < bounds.length; b++) {
+        for (let b = 0; b < scaledBounds.length; b++) {
             scaledBounds[b].t = Math.floor(bounds[b].t * scale);
             scaledBounds[b].b = Math.floor(bounds[b].b * scale);
             scaledBounds[b].x = Math.floor(bounds[b].x * scale);
-            scaledBounds[b].h = scaledBounds[b].b - scaledBounds[b].t;;
+            scaledBounds[b].h = scaledBounds[b].b - scaledBounds[b].t;
+            ;
         }
 
-        for(let side = LEFT; side <= RIGHT; side++){
+        for (let side = LEFT; side <= RIGHT; side++) {
             for (let i = 0; i < scaledBounds[side].h; i++) {
                 let y = scaledBounds[side].t
                 let x = scaledBounds[side].x;
 
-                x = skipColor(x, y+i, side, false);
-                x = skipColor(x, y+i, side, true);
+                x = skipColor(x, y + i, side, false);
+                x = skipColor(x, y + i, side, true);
 
-                pl[i] = x;
+                position[side][i] = x;
             }
         }
     }
@@ -138,18 +141,39 @@ async function humanEnergy() {
     function animate() {
         let c = 0;
 
-        debugger
-        const imgData = srcCtx.createImageData(4, 4);
+        const imgData = srcCtx.createImageData(1, 1);
         for (let i = 0; i < imgData.data.length; i += 4) {
             imgData.data[i + 0] = 255;
-            imgData.data[i + 1] = 0;
+            imgData.data[i + 1] = 255;
             imgData.data[i + 2] = 0;
-            imgData.data[i + 3] = 255;
+            imgData.data[i + 3] = 1;
         }
-        do {
-            let y = Math.floor(Math.random() * (pr.length));
-            srcCtx.drawImage(pixelImg, pr[y], scaledBounds[RIGHT].t + y);
-        } while (c++ < 1);
+        let maxX = 0, id;
+
+        function drawADot() {
+            for (let i = 0; i < scaledBounds[LEFT].h; i++) {
+
+                let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
+                srcCtx.putImageData(imgData, position[0][y]++, scaledBounds[LEFT].t + y);
+                // srcCtx.drawImage(pixelImg, position[0][y]++, scaledBounds[LEFT].t + y);
+                maxX = Math.max(maxX, position[0][y]);
+                // srcCtx.putImageData(imgData, x, y);
+                if (maxX > scaledBounds[RIGHT].x)
+                    clearInterval(id);
+
+            }
+
+        }
+
+        id = setInterval(drawADot, 30)
+        /*        do {
+                    let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
+                    srcCtx.putImageData(imgData, position[0][y]++, scaledBounds[LEFT].t + y);
+                    // srcCtx.drawImage(pixelImg, position[0][y]++, scaledBounds[LEFT].t + y);
+                    maxX = Math.max(maxX, position[0][y]);
+                    // srcCtx.putImageData(imgData, x, y);
+
+                } while (maxX < scaledBounds[RIGHT].x);*/
     }
 
     function getImageContext(url) {
@@ -187,6 +211,6 @@ async function humanEnergy() {
 
     await initializeImage();
     initializeAnimation();
-    // animate();
+    animate();
 
 }
