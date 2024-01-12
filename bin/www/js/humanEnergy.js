@@ -92,16 +92,11 @@ async function humanEnergy() {
     function skipColor(x, y, side, isForeground) {
         const THRESHOLD = 24;
 
-        // const imgData = srcCtx.createImageData(1,1);
-        // imgData.data = [255,0,0,1];
-
         let color, imageData;
         let otherSide = side === LEFT ? RIGHT : LEFT;
         let bound = scaledBounds[otherSide].x;
         do {
             imageData = srcCtx.getImageData(x, y, 1, 1);
-            // srcCtx.putImageData(imgData, x, y);
-
             x += bounds[side].d;
             color = (imageData.data[RED] > THRESHOLD) || (imageData.data[GREEN] > THRESHOLD) || (imageData.data[BLUE] > THRESHOLD);
         } while ((color == isForeground) && (side === LEFT ? x < bound : x > bound));
@@ -110,9 +105,6 @@ async function humanEnergy() {
     }
 
     function initializeAnimation() {
-
-        const imgData = srcCtx.createImageData(1, 1);
-        imgData.data = [255, 0, 0, 1];
 
         for (let b = 0; b < scaledBounds.length; b++) {
             scaledBounds[b].t = Math.floor(bounds[b].t * scale);
