@@ -17,7 +17,6 @@ setInterval(checkOrientation, 2000);
 async function humanEnergy() {
 
     const LEFT = 0, RIGHT = 1, RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
-    const PIXEL_SIZE = 16;
     const bounds = [
         {
             t: 438,
@@ -64,7 +63,7 @@ async function humanEnergy() {
     async function initializeImage() {
         let elem = document.getElementById("source");
         srcCtx = elem.getContext('2d', {willReadFrequently: true});
-        elem = document.getElementById("source");
+        elem = document.getElementById("destination");
         destCtx = elem.getContext('2d');
 
         const IMAGE_URL = "./assets/he/humanEnergy1.jpg";
@@ -77,6 +76,8 @@ async function humanEnergy() {
 
         srcCtx.canvas.width = width;
         srcCtx.canvas.height = height;
+        destCtx.canvas.width = width;
+        destCtx.canvas.height = height;
 
         position[0] = new Array(scaledBounds[LEFT].b - scaledBounds[LEFT].t);
         position[1] = new Array(scaledBounds[RIGHT].b - scaledBounds[RIGHT].t);
@@ -89,7 +90,7 @@ async function humanEnergy() {
     }
 
     function skipColor(x, y, side, isForeground) {
-        const THRESHOLD = 24
+        const THRESHOLD = 24;
 
         // const imgData = srcCtx.createImageData(1,1);
         // imgData.data = [255,0,0,1];
@@ -135,35 +136,36 @@ async function humanEnergy() {
     }
 
     function animate() {
-        const DELAY = 92;
+        const DELAY = 92, LEFT_DOTS = 100, RIGHT_DOTS = 50;
+
         let c = 0;
 
-        const imgData = srcCtx.createImageData(1, 1);
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            imgData.data[i + 0] = 255;
-            imgData.data[i + 1] = 255;
-            imgData.data[i + 2] = 0;
-            imgData.data[i + 3] = 1;
-        }
+        destCtx.globalAlpha = .9;
+        // Shadow
+        destCtx.shadowColor = "#00000010";
+        destCtx.shadowOffsetX = 20;
+        destCtx.shadowOffsetY = 20;
+        // destCtx.shadowBlur = 15;
+
         let maxX = 0, minX = 10000, id;
 
         function drawADot() {
-            const pWIDTH = 16, pHEIGHT = 8, DELTA = 2;
+            const pWIDTH = 32, pHEIGHT = 16, DELTA = 8;
 
-            for (let i = 0; i < scaledBounds[LEFT].h; i++) {
+            for (let i = 0; i < LEFT_DOTS; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
-                srcCtx.drawImage(pixelImg, position[LEFT][y]+=DELTA, scaledBounds[LEFT].t + y, pWIDTH, pHEIGHT);
+                destCtx.drawImage(pixelImg, position[LEFT][y]+=DELTA, scaledBounds[LEFT].t + y, pWIDTH, pHEIGHT);
                 maxX = Math.max(maxX, position[LEFT][y]);
                 if (maxX > scaledBounds[RIGHT].x)
                     clearInterval(id);
 
             }
 
-            for (let i = 0; i < scaledBounds[RIGHT].h; i++) {
+            for (let i = 0; i < RIGHT_DOTS; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h));
-                srcCtx.drawImage(pixelImg, position[RIGHT][y]-=DELTA, scaledBounds[RIGHT].t + y, pWIDTH, pHEIGHT);
+                destCtx.drawImage(pixelImg, position[RIGHT][y]-=DELTA, scaledBounds[RIGHT].t + y, pWIDTH, pHEIGHT);
                 minX = Math.min(minX, position[RIGHT][y]);
                 if (minX < scaledBounds[LEFT].x)
                     clearInterval(id);
