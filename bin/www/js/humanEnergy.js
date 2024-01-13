@@ -132,7 +132,7 @@ async function humanEnergy() {
 
         let c = 0;
 
-        destCtx.globalAlpha = .9;
+        destCtx.globalAlpha = .3;
         // Shadow
         destCtx.shadowColor = "#00000010";
         destCtx.shadowOffsetX = 20;
@@ -142,14 +142,14 @@ async function humanEnergy() {
         let maxX = 0, minX = 10000, id;
 
         function drawADot() {
-            const pWIDTH = 32, pHEIGHT = 16, DELTA = 8;
+            const pWIDTH = 8, pHEIGHT = 16, DELTA = 4;
 
             for (let i = 0; i < LEFT_DOTS; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
                 destCtx.drawImage(pixelImg, position[LEFT][y]+=DELTA, scaledBounds[LEFT].t + y, pWIDTH, pHEIGHT);
                 maxX = Math.max(maxX, position[LEFT][y]);
-                if (maxX > scaledBounds[RIGHT].x)
+                if (maxX >= width)//scaledBounds[RIGHT].x)
                     clearInterval(id);
 
             }
@@ -159,7 +159,7 @@ async function humanEnergy() {
                 let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h));
                 destCtx.drawImage(pixelImg, position[RIGHT][y]-=DELTA, scaledBounds[RIGHT].t + y, pWIDTH, pHEIGHT);
                 minX = Math.min(minX, position[RIGHT][y]);
-                if (minX < scaledBounds[LEFT].x)
+                if (minX <= 0) // scaledBounds[LEFT].x)
                     clearInterval(id);
 
             }
