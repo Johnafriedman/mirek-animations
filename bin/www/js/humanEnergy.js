@@ -111,24 +111,25 @@ async function humanEnergy() {
             scaledBounds[b].b = Math.floor(bounds[b].b * scale);
             scaledBounds[b].x = Math.floor(bounds[b].x * scale);
             scaledBounds[b].h = scaledBounds[b].b - scaledBounds[b].t;
-            ;
         }
 
         for (let side = LEFT; side <= RIGHT; side++) {
             for (let i = 0; i < scaledBounds[side].h; i++) {
-                let y = scaledBounds[side].t
+                let y = scaledBounds[side].t;
                 let x = scaledBounds[side].x;
 
                 x = skipColor(x, y + i, side, false);
                 x = skipColor(x, y + i, side, true);
 
-                position[side][i] = x;
+                position[side][i] = {start: x, current: x};
             }
         }
     }
 
     function animate() {
-        const DELAY = 92, LEFT_DOTS = 100, RIGHT_DOTS = 50;
+        const DELAY = 40, LEFT_DOTS = 100, RIGHT_DOTS = 50;
+        const DRAW_MODE = true, ERASE_MODE = false;
+        let mode = DRAW_MODE;
 
         let c = 0;
 
@@ -139,7 +140,15 @@ async function humanEnergy() {
         destCtx.shadowOffsetY = 20;
         // destCtx.shadowBlur = 15;
 
+        destCtx.fillStyle = "#FFFF0080";
+
         let maxX = 0, minX = 10000, id;
+
+        function toggleMode(){
+            mode = !mode;
+            maxX = 0, minX = 10000;
+
+        }
 
         function drawADot() {
             const pWIDTH = 8, pHEIGHT = 16, DELTA = 4;
@@ -147,23 +156,44 @@ async function humanEnergy() {
             for (let i = 0; i < LEFT_DOTS; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[LEFT].h));
-                destCtx.drawImage(pixelImg, position[LEFT][y]+=DELTA, scaledBounds[LEFT].t + y, pWIDTH, pHEIGHT);
-                maxX = Math.max(maxX, position[LEFT][y]);
-                if (maxX >= width)//scaledBounds[RIGHT].x)
-                    clearInterval(id);
+                if(mode===DRAW_MODE){
+                    destCtx.drawImage(pixelImg, position[LEFT][y].current+=DELTA, scaledBounds[LEFT].t + y, pWIDTH, pHEIGHT);
+                } else {
+                    destCtx.clearRect(position[LEFT][y].current-=4, scaledBounds[LEFT].t + y, 4, 1)
+                }
+
+                if(mode===DRAW_MODE){
+                    maxX = Math.max(maxX, position[LEFT][y].current);
+                    if (maxX >= width)
+                        toggleMode();
+                } else {
+                    minX = Math.min(minX, position[LEFT][y].current);
+                    if (minX <= 0)
+                        toggleMode();
+                }
 
             }
 
             for (let i = 0; i < RIGHT_DOTS; i++) {
 
                 let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h));
-                destCtx.drawImage(pixelImg, position[RIGHT][y]-=DELTA, scaledBounds[RIGHT].t + y, pWIDTH, pHEIGHT);
-                minX = Math.min(minX, position[RIGHT][y]);
-                if (minX <= 0) // scaledBounds[LEFT].x)
-                    clearInterval(id);
+                if(mode===DRAW_MODE) {
+                    destCtx.drawImage(pixelImg, position[RIGHT][y].current -= DELTA, scaledBounds[RIGHT].t + y, pWIDTH, pHEIGHT);
+                }else {
+                    destCtx.clearRect(position[RIGHT][y].current+=4, scaledBounds[RIGHT].t + y, 4, 1)
+                }
+
+                if(mode===DRAW_MODE){
+                    minX = Math.min(minX, position[RIGHT][y].current);
+                    if (minX <= 0)
+                        toggleMode();
+                } else {
+                    maxX = Math.max(maxX, position[RIGHT][y].current);
+                    if (maxX >= width)
+                        toggleMode();
+                }
 
             }
-
         }
 
         id = setInterval(drawADot, DELAY)
