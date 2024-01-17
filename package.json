@@ -22,7 +22,7 @@
     "url": "https://github.com/Johnafriedman/mirek-animations/issues"
   },
   "homepage": "https://github.com/Johnafriedman/mirek-animations#readme",
-  "main": "bin/www/server.js",
+  "main": "server.js",
   "devDependencies": {},
   "author": ""
 }
