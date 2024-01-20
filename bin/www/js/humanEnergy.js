@@ -17,21 +17,23 @@ setInterval(checkOrientation, 2000);
 async function humanEnergy() {
 
     const LEFT = 0, RIGHT = 1, RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
-    const pWIDTH = 8, pHEIGHT = 4, DELTA = 4;
+    const pWIDTH = 4, pHEIGHT = 4, DELTA = 7;
     const DRAW_MODE = true;
 
     const bounds = [
         {
-            t: 438,
+            t: 440,
             b: 2410,
             x: 1024,
-            d: 1
+            d: 1,
+            color: "#FF0000FF"
         },
         {
             t: 536,
             b: 1412,
             x: 3244,
-            d: -1
+            d: -1,
+            color: "#FFFFFFFF"
         }
     ];
 
@@ -121,31 +123,26 @@ async function humanEnergy() {
     function animate() {
         const DELAY = 80, LEFT_DOTS = 100, RIGHT_DOTS = 50;
 
-        destCtx.globalAlpha = .8;
+        destCtx.globalAlpha = 1.0;
         destCtx.globalCompositeOperation = "source-over";
         // Shadow
-        destCtx.shadowColor = "#FFFF0010";
+        // destCtx.shadowColor = "#FFFF0010";
         destCtx.shadowOffsetX = 20;
         destCtx.shadowOffsetY = 20;
         // destCtx.shadowBlur = 15;
-
-        destCtx.fillStyle = "#FFFF0020";
-        const colors = ["#FF000020","#00FF0020"];
 
             let id;
 
         function drawADot(p, y, side){
 
-            destCtx.fillStyle = colors[side];
-
             if (p.mode === DRAW_MODE) {
-                destCtx.drawImage(pixelImg, p.current, scaledBounds[side].t + y, pWIDTH, pHEIGHT);
+                destCtx.fillRect(p.current, scaledBounds[side].t + y, pWIDTH, pHEIGHT);
             } else {
                 destCtx.clearRect(p.current, scaledBounds[side].t + y, pWIDTH, pHEIGHT)
             }
 
             p.current += p.delta;
-            if((p.current >= position[RIGHT][y].start) || (p.current <= position[LEFT][y].start)) {
+            if((p.current >= position[RIGHT][y].end) || (p.current <= position[LEFT][y].end)) {
                 p.mode = !p.mode;
                 p.delta *= -1;
             }
@@ -154,16 +151,18 @@ async function humanEnergy() {
 
         function drawDots() {
 
+            destCtx.fillStyle = bounds[LEFT].color;
             for (let i=0; i < LEFT_DOTS; i++) {
 
-                let y = Math.floor(Math.random() * (scaledBounds[LEFT].h/4))*4;
+                let y = Math.floor(Math.random() * (scaledBounds[LEFT].h/(pHEIGHT*2)))*pHEIGHT*2;
                 let p = position[LEFT][y];
                 p = drawADot(p, y, LEFT);
             }
 
+            destCtx.fillStyle = bounds[RIGHT].color;
             for (let i=0; i < RIGHT_DOTS; i++) {
 
-                let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h/4)) *4 +2;
+                let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h/(pHEIGHT*2))) *pHEIGHT *2 +pHEIGHT;
                 let p = position[RIGHT][y];
                 p = drawADot(p, y, RIGHT);
             }
