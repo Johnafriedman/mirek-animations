@@ -14,8 +14,8 @@ window.addEventListener("orientationchange", checkOrientation, false);
 // (optional) Android doesn't always fire orientationChange on 180 degree turns
 setInterval(checkOrientation, 2000);
 
-async function humanEnergy() {
 
+async function humanEnergy() {
     const LEFT = 0, RIGHT = 1, RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
     const pWIDTH = 4, pHEIGHT = 4, DELTA = 7;
     const DRAW_MODE = true;
@@ -46,9 +46,6 @@ async function humanEnergy() {
         "humanEnergy1.jpg",
         "humanEnergy2.jpg"
     ];
-
-
-    let frame = [];
 
     document.body.innerHTML = '';
 
@@ -94,7 +91,7 @@ async function humanEnergy() {
 
             srcCtx.drawImage(img, 0, 0, width, height);
 
-            let position = [];
+/*            let position = [];
             position[LEFT] = new Array(figureHeight);
             position[RIGHT] = new Array(figureHeight);
             frame[f] = {
@@ -106,6 +103,14 @@ async function humanEnergy() {
                     elem: dstElem,
                     ctx: dstCtx
                 }, position
+            }*/
+            window.frame[f].src= {
+                elem: srcElem,
+                ctx: srcCtx
+            };
+            window.frame[f].dst= {
+                elem: dstElem,
+                ctx: dstCtx
             };
         }
     }
@@ -243,7 +248,7 @@ async function humanEnergy() {
     }
 
     await initializeImage();
-    initializeAnimation();
+    // initializeAnimation();
     animate();
 
 }
