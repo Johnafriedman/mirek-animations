@@ -10,6 +10,7 @@
     "node": "20.10.0",
     "npm": "10.2.3"
   },
+  "type": "module",
   "scripts": {
     "start": "npm run ./server.js",
     "build": "npm install"

@@ -4,7 +4,7 @@ let previousOrientation = window.screen.orientation;
 let checkOrientation = function () {
     if (window.screen.orientation.type !== previousOrientation.type) {
         previousOrientation.type = window.screen.orientation.type;
-        humanEnergy();
+        humanEnergy().then();
     }
 };
 
@@ -39,7 +39,7 @@ async function humanEnergy() {
 
     let scaledBounds = [{}, {}];
 
-    let width, height, figureHeight;
+    let width, height, figureHeight, frame = [];
 
     const IMAGE_PATH = "./assets/he/"
     const URL = [
@@ -91,7 +91,7 @@ async function humanEnergy() {
 
             srcCtx.drawImage(img, 0, 0, width, height);
 
-/*            let position = [];
+            let position = [];
             position[LEFT] = new Array(figureHeight);
             position[RIGHT] = new Array(figureHeight);
             frame[f] = {
@@ -103,15 +103,7 @@ async function humanEnergy() {
                     elem: dstElem,
                     ctx: dstCtx
                 }, position
-            }*/
-            window.frame[f].src= {
-                elem: srcElem,
-                ctx: srcCtx
-            };
-            window.frame[f].dst= {
-                elem: dstElem,
-                ctx: dstCtx
-            };
+            }
         }
     }
 
@@ -192,39 +184,41 @@ async function humanEnergy() {
         }
 
         let currentFrame = 0;
+
         function toggleFrame() {
-                frame[currentFrame].src.elem.style.visibility = 'hidden';
-                frame[currentFrame].dst.elem.style.visibility = 'hidden';
-                currentFrame = currentFrame === 0 ? 1 : 0;
-                frame[currentFrame].src.elem.style.visibility = 'visible';
-                frame[currentFrame].dst.elem.style.visibility = 'visible';
+            frame[currentFrame].src.elem.style.visibility = 'hidden';
+            frame[currentFrame].dst.elem.style.visibility = 'hidden';
+            currentFrame = currentFrame === 0 ? 1 : 0;
+            frame[currentFrame].src.elem.style.visibility = 'visible';
+            frame[currentFrame].dst.elem.style.visibility = 'visible';
         }
 
-        function newNextFrame(){
-            return Math.floor(Math.random()*FRAME_DELAY_MAX)+FRAME_DELAY_MIN;
+        function newNextFrame() {
+            return Math.floor(Math.random() * FRAME_DELAY_MAX) + FRAME_DELAY_MIN;
         }
 
         let nextFrame = newNextFrame();
+
         function drawDots() {
 
 
-                frame[currentFrame].dst.ctx.fillStyle = bounds[LEFT].color;
-                for (let i = 0; i < LEFT_DOTS; i++) {
+            frame[currentFrame].dst.ctx.fillStyle = bounds[LEFT].color;
+            for (let i = 0; i < LEFT_DOTS; i++) {
 
-                    let y = Math.floor(Math.random() * (scaledBounds[LEFT].h / (pHEIGHT * 2))) * pHEIGHT * 2;
-                    let p = frame[currentFrame].position[LEFT][y];
-                    p = drawADot(currentFrame, p, y, LEFT);
-                }
+                let y = Math.floor(Math.random() * (scaledBounds[LEFT].h / (pHEIGHT * 2))) * pHEIGHT * 2;
+                let p = frame[currentFrame].position[LEFT][y];
+                p = drawADot(currentFrame, p, y, LEFT);
+            }
 
-                frame[currentFrame].dst.ctx.fillStyle = bounds[RIGHT].color;
-                for (let i = 0; i < RIGHT_DOTS; i++) {
+            frame[currentFrame].dst.ctx.fillStyle = bounds[RIGHT].color;
+            for (let i = 0; i < RIGHT_DOTS; i++) {
 
-                    let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h / (pHEIGHT * 2))) * pHEIGHT * 2 + pHEIGHT;
-                    let p = frame[currentFrame].position[RIGHT][y];
-                    p = drawADot(currentFrame, p, y, RIGHT);
-                }
+                let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h / (pHEIGHT * 2))) * pHEIGHT * 2 + pHEIGHT;
+                let p = frame[currentFrame].position[RIGHT][y];
+                p = drawADot(currentFrame, p, y, RIGHT);
+            }
 
-            if(--nextFrame<0){
+            if (--nextFrame < 0) {
                 nextFrame = newNextFrame();
                 toggleFrame();
             }
@@ -248,7 +242,7 @@ async function humanEnergy() {
     }
 
     await initializeImage();
-    // initializeAnimation();
+    initializeAnimation();
     animate();
 
 }
