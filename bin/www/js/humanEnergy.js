@@ -186,15 +186,13 @@ async function humanEnergy() {
             return p;
         }
 
+        let currentFrame = 0;
         function toggleFrame() {
-            if (frame[0].src.elem.style.visibility === 'visible') {
-                frame[0].src.elem.style.visibility = 'hidden';
-                frame[1].src.elem.style.visibility = 'visible';
-            } else {
-                frame[1].src.elem.style.visibility = 'hidden';
-                frame[0].src.elem.style.visibility = 'visible';
-            }
-            ;
+                frame[currentFrame].src.elem.style.visibility = 'hidden';
+                frame[currentFrame].dst.elem.style.visibility = 'hidden';
+                currentFrame = currentFrame === 0 ? 1 : 0;
+                frame[currentFrame].src.elem.style.visibility = 'visible';
+                frame[currentFrame].dst.elem.style.visibility = 'visible';
         }
 
         function newNextFrame(){
@@ -204,25 +202,23 @@ async function humanEnergy() {
         let nextFrame = newNextFrame();
         function drawDots() {
 
-            for (let f = 0; f < frame.length; f++) {
 
-                frame[f].dst.ctx.fillStyle = bounds[LEFT].color;
+                frame[currentFrame].dst.ctx.fillStyle = bounds[LEFT].color;
                 for (let i = 0; i < LEFT_DOTS; i++) {
 
                     let y = Math.floor(Math.random() * (scaledBounds[LEFT].h / (pHEIGHT * 2))) * pHEIGHT * 2;
-                    let p = frame[f].position[LEFT][y];
-                    p = drawADot(f, p, y, LEFT);
+                    let p = frame[currentFrame].position[LEFT][y];
+                    p = drawADot(currentFrame, p, y, LEFT);
                 }
 
-                frame[f].dst.ctx.fillStyle = bounds[RIGHT].color;
+                frame[currentFrame].dst.ctx.fillStyle = bounds[RIGHT].color;
                 for (let i = 0; i < RIGHT_DOTS; i++) {
 
                     let y = Math.floor(Math.random() * (scaledBounds[RIGHT].h / (pHEIGHT * 2))) * pHEIGHT * 2 + pHEIGHT;
-                    let p = frame[f].position[RIGHT][y];
-                    p = drawADot(f, p, y, RIGHT);
+                    let p = frame[currentFrame].position[RIGHT][y];
+                    p = drawADot(currentFrame, p, y, RIGHT);
                 }
 
-            }
             if(--nextFrame<0){
                 nextFrame = newNextFrame();
                 toggleFrame();
